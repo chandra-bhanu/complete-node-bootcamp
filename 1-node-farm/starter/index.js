@@ -1,6 +1,13 @@
 const fs    =   require("fs");
 const http = require('http');
 const url = require('url');
+const slugify = require('slugify');
+//Import Templates
+const replaceTemplate = require('./modules/replaceTemplate');
+
+
+///////////////////////////
+//FILES
 // console.time("dbsave");
 // const textIn=fs.readFileSync('./txt/input.txt','utf-8');
 // //console.log(textIn);
@@ -31,24 +38,7 @@ const url = require('url');
 // console.log('Will read file');
 
 
-//SERVER
-//template functions
-const replaceTemplate= (temp,product) => {
-    let output = temp.replace(/{%PRODUCTNAME%}/g,product.productName);
-        output = output.replace(/{%IMAGE%}/g,product.image);
-        output = output.replace(/{%PRICE%}/g,product.price);
-        output = output.replace(/{%FROM%}/g,product.from);
-        output = output.replace(/{%NUTRIENTS%}/g,product.nutrients);
-        output = output.replace(/{%QUANTITY%}/g,product.quantity);
-        output = output.replace(/{%DESCRIPTION%}/g,product.description);
-        output = output.replace(/{%ID%}/g,product.id);
-
-        if(!product.organic)
-        output = output.replace(/{%NOT_ORGANIC%}/g,'not-organic');
-       
-    return output;
-}
-
+//SERVER/////////////////////////////////////////////////
 
 //readonce
 const templateOverview= fs.readFileSync(`${__dirname}/templates/template-overview.html`,'utf-8');
@@ -58,13 +48,15 @@ const templateProduct= fs.readFileSync(`${__dirname}/templates/template-product.
 const data= fs.readFileSync(`${__dirname}/dev-data/data.json`,'utf-8');
 const dataObj=JSON.parse(data);
 
-
+// const slugs= dataObj.map(el => slugify(el.productName,{lower:true}));
+// console.log(slugs);
 
 //ROUTING
 const server = http.createServer((req,res)=>{
-    const pathName=req.url;
 
-    if(pathName === '/' || pathName === '/overview')
+    const {query,pathname} = url.parse(req.url,true);
+
+    if(pathname === '/' || pathname === '/overview')
     {
         res.writeHead(200,{'Content-type':'text/html'});
 
@@ -72,11 +64,22 @@ const server = http.createServer((req,res)=>{
         const output = templateOverview.replace('{%PRODCT_CARDS%}',cardsHtml);
         res.end(output);
     }
-    else if(pathName === '/product')
+    else if(pathname.startsWith('/product/'))
     {
-        res.end('This is PRODUCT');
+        res.writeHead(200,{'Content-type':'text/html'});
+        const productSlug = pathname.split('/').pop();
+        const product = dataObj.find(obj => obj.slug === productSlug);
+        if (product) {
+            const output = replaceTemplate(templateProduct,product);
+            res.end(output);
+        }
+        else {
+            // If product data doesn't exist, render a 404 page
+            res.end('<h1>404 Not Found</h1>');
+        }
+        
     }
-    else if(pathName === '/api')
+    else if(pathname === '/api')
     {
         res.writeHead(200,{'Content-type':'application/json'});
         res.end(data);
@@ -87,7 +90,7 @@ const server = http.createServer((req,res)=>{
            'Content-type':'text/html' ,
            'my-own-header':'hello-world'
         });
-        res.end('<h1>Not found</h1>');
+        res.end('<h1>Not found!</h1>');
     }
    
 });

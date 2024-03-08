@@ -2,6 +2,7 @@
   {
     "id": 0,
     "productName": "Fresh Avocados",
+    "slug": "fresh-avocados",
     "image": "🥑",
     "from": "Spain",
     "nutrients": "Vitamin B, Vitamin K",
@@ -13,6 +14,7 @@
   {
     "id": 1,
     "productName": "Goat and Sheep Cheese",
+    "slug": "goat-and-sheep-cheese",
     "image": "🧀",
     "from": "Portugal",
     "nutrients": "Vitamin A, Calcium",
@@ -24,6 +26,7 @@
   {
     "id": 2,
     "productName": "Apollo Broccoli",
+    "slug": "apollo-broccoli",
     "image": "🥦",
     "from": "Portugal",
     "nutrients": "Vitamin C, Vitamin K",
@@ -35,6 +38,7 @@
   {
     "id": 3,
     "productName": "Baby Carrots",
+    "slug": "baby-carrots",
     "image": "🥕",
     "from": "France",
     "nutrients": "Vitamin A, Vitamin K",
@@ -46,6 +50,7 @@
   {
     "id": 4,
     "productName": "Sweet Corncobs",
+    "slug": "sweet-corncobs",
     "image": "🌽",
     "from": "Germany",
     "nutrients": "Vitamin C, Magnesium",
